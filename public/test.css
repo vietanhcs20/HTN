@@ -43,17 +43,6 @@ ul{
     opacity: 0;
 }
 
-.bgc-off{
-    background-color: #27293d;
-    
-}
-
-.bgc-on{
-    background-color: tomato;
-    
-}
-
-
 
 #div-linechart-display-type{
     width: 20%;
@@ -97,7 +86,7 @@ ul{
     margin: 8px 16px;
     background-color: #27293d;
     position: fixed;
-    z-index: 10;
+    z-index: 4;
     right: 32px;
 }
 
@@ -269,6 +258,79 @@ form{
 }
 
 
+.toast-message{
+    position: fixed;
+    left: 16px;
+    top: 98px;
+    z-index: 5;
+
+}
+.toast{
+    position: relative;
+    display: flex;
+    min-width: 180px;
+    max-width: 250px;
+    background-color: #fff;
+    align-items: center;
+    padding: 12px 0;
+    border-radius: 2px;
+    border: 1px solid #333;
+    animation: slideInLeft ease .5s, fadeOut linear 1s 2s forwards;
+}
+
+@keyframes slideInLeft{
+    from{
+        opacity: .5;
+        transform: translateX(calc(-100% - 16px));
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut{
+    from{
+        opacity: 1;
+    }
+    to{
+        opacity: 0;
+    }
+}
+
+.toast + .toast{
+    margin-top: 16px;
+}
+
+.toast.toast-on{
+    background: linear-gradient(to top right, #c5e9cc, rgb(155, 235, 171));
+    box-shadow: 2px 5px 8px rgba(155, 235, 171, 0.2);
+}
+
+.toast.toast-off{
+    background: linear-gradient(to top right, #ebbdb2, rgb(241, 183, 154));
+    box-shadow: 2px 5px 8px rgba(212, 156, 128, 0.2);
+}
+
+
+.toast .toast-icon{
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    color: #47d864;
+    padding: 0 12px;
+}
+
+.toast-off .toast-icon{
+    color: #ff623d;
+}
+
+.toast-body{
+    flex-grow: 1;
+    text-transform: uppercase;
+}
+
+
 
 @media (max-width: 1023px){
     .showMenu{
@@ -286,7 +348,7 @@ form{
         top: 0;
         left: 0;
         right: 0;
-        z-index: 10;
+        z-index: 4;
     }
 
     .header .container{

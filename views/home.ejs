@@ -12,9 +12,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </head>
 <body>
     <div class="app">
+		<div class="toast-message">
+			<!-- <div class="toast toast-on">
+				<div class="toast-icon">
+					<ion-icon name="checkmark-circle"></ion-icon>
+				</div>
+				<div class="toast-body">
+					<h3>LED 1 ON</h3>
+				</div>
+			</div>
+			<div class="toast toast-off">
+				<div class="toast-icon">
+					<ion-icon name="alert-circle"></ion-icon>
+				</div>
+				<div class="toast-body">
+					<h3>LED 1 OFF</h3>
+				</div>
+			</div> -->
+		</div>
+		
         <div class="header">
             <ul class="nav">
                 <li><a href="">
@@ -148,24 +169,47 @@
     </div>
 	<script src="mychart.js"></script>
     <script>
-
-		var congtacs = document.querySelectorAll("input[type*='checkbox']")
+		var congtacs = document.querySelectorAll("input[type='checkbox']")
 		console.log(congtacs)
 		var ledLabel = document.querySelectorAll(".labelLed");
 		console.log(ledLabel)
 
 		congtacs.forEach(function(congtac, index){
 			congtac.addEventListener('click', function() {
+				var number = index + 1;
+				function toastMessage(status) {
+					const main = document.querySelector('.toast-message');
+					const toast = document.createElement('div');
+					toast.classList.add('toast', `toast-${status}`);
+
+					const icons = {
+						on: '<ion-icon name="checkmark-circle"></ion-icon>',
+						off: '<ion-icon name="alert-circle"></ion-icon>'
+					}
+					console.log(icons[status]);
+					toast.innerHTML = `
+						<div class="toast-icon">
+							${icons[status]}
+						</div>
+						<div class="toast-body">
+							<h3>LED ${number} ${status}</h3>
+						</div>
+					`;
+					main.appendChild(toast);
+					setTimeout(function() {
+						main.removeChild(toast);
+					}, 3600)
+				}
+
 				if ( congtac.checked === true ){
-					ledLabel[index].classList.remove('bgc-off');
-					ledLabel[index].classList.add('bgc-on');
-					ledLabel[index].classList.add('move');
-				}
-				else{
-					ledLabel[index].classList.remove('move');
-					ledLabel[index].classList.remove('bgc-on');
-					ledLabel[index].classList.add('bgc-of');
-				}
+						ledLabel[index].style.backgroundColor = 'tomato';
+						toastMessage('on');
+					}
+					else{
+						ledLabel[index].style.backgroundColor = '#27293d';
+						toastMessage('off');
+					}
+				
 			})
 		})
 
