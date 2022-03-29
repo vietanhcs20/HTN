@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART HOME</title>
+    <link rel="stylesheet" href="./test.css">
+    <link rel="stylesheet" href="./font-icons/fontawesome/css/all.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <ul class="nav">
+                <li><a href="">
+					<i class="fa-solid fa-house"></i>
+					Home</a></li>
+				<li class="prj-title"><p>SMART HOME CONTROLS</p></li>
+                <li><a href="history">History</a></li>
+            </ul>
+			<div class="mb-menu-btn">
+				<button class="menu-list"><i class="fa-solid fa-bars"></i></button>
+			</div>
+        </div>
+
+        <div class="container">
+            <div class="sidebar radius">
+                <p>Controls</p>
+                <div class="line"></div>
+                <div class="led-control">
+                    <div class="led-btn">
+                        <input id="congtac1" class="checkbox" type="checkbox" <%=(data.relay1=="on")?"checked":""%> data="relay1" />
+                        <div class="label bgc-off labelLed">
+                            <img src="./photos/lightbulb.png" alt="">
+                            <span id="state1">LED 1 </span>
+                        </div>
+                    </div>
+                    <div class="led-btn">
+                        <input id="congtac2" class="checkbox" type="checkbox" <%=(data.relay2=="on")? "checked":""%> data="relay2" />
+                        <div class="label bgc-off labelLed">
+                            <img src="./photos/lightbulb.png" alt="">
+                            <span id="state2">LED 2 </span>
+                        </div>
+                    </div>
+                    <div class="led-btn">
+                        <input id="congtac3" class="checkbox" type="checkbox" <%=(data.relay3=="on")?"checked":""%> data="relay3" />
+                        <div class="label bgc-off labelLed">
+                            <img src="./photos/lightbulb.png" alt="">
+                            <span id="state3">LED 3 </span>
+                        </div>
+                    </div>
+                    <div class="led-btn">
+                        <input id="congtac4" class="checkbox" type="checkbox" <%=(data.relay4=="on")?"checked":""%> data="relay4" />
+                        <div class="label bgc-off labelLed">
+                            <img src="./photos/lightbulb.png" alt="">
+                            <span id="state4">LED 4 </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="date-time">
+                    <div class="date">
+                        <div>
+                            <i class="fa-solid fa-calendar-days date-icon"></i>
+                            <span id="day">Date: <%=data.date%></span>
+                        </div>
+                    </div>
+                    <div class="time">
+                        <div>
+                            <i class="fa-solid fa-clock-rotate-left time-icon"></i>
+                            <span id="time">Time: <%=data.time%></span>
+                        </div>
+                    </div>
+					<div id="div-linechart-display-type">
+						<div class="button-container">
+							<form action="">
+								<label class="label1 active activeLinks"><input type="radio" data="laygiay" name="chart" checked>Second</label>
+								<label class="label2 activeLinks"><input type="radio" data="laygio" name="chart">Hour</label>
+								<label class="label3 activeLinks" ><input type="radio" data="layngay" name="chart">Day</label>	 
+							</form>
+						</div>					
+					</div>
+                </div>
+
+                <div class="information">
+                    <div class="temp background radius">
+                        <div class="padding-16">
+                            <i class="fa-solid fa-temperature-half temp-icon icons-fontsize"></i>
+                            <span>Temperature</span>
+                        </div>
+                        <p id="temp"><%=data.temperature%>°C</p>
+                    </div>
+                    <div class="humi background radius">
+                        <div class="padding-16">
+                            <i class="fa-solid fa-droplet humi-icon icons-fontsize"></i>
+                            <span>Humidity</span>
+                        </div>
+                        <p id="div-hum"><%=data.humidity%>%</p>
+                    </div>
+                    <div class="lux background radius">
+                        <div class="padding-16">
+                            <i class="fa-regular fa-sun lux-icon icons-fontsize"></i>
+                            <span>Light</span>
+                        </div>
+                        <p id="light"><%=data.light%>lux</p>
+                    </div>
+                </div>
+
+                <div class="line-chart">
+                    <div class="temp-chart background radius">
+                        <div class="chart-container">
+							<div class="chart-title">
+								<i style="color: lightcoral;" class="fa-solid fa-chart-column"></i>
+								<span>Temperature Chart</span>
+							</div>
+							<canvas id="chartTemp"></canvas>
+						</div>
+                    </div>
+                    <div class="humi-chart background radius">
+                        <div class="chart-container">
+							<div class="chart-title">
+								<i style="color: #1d8cf8" class="fa-solid fa-chart-column"></i>
+								<span>Humidity Chart</span>
+							</div>
+							<canvas id="chartHum"></canvas>
+						</div>
+                    </div>
+                </div>
+				<div class="light-chart background radius">
+					<div class="chart-container">
+						<div class="chart-title">
+							<i style="color: yellow" class="fa-solid fa-chart-column"></i>
+							<span>Light Chart</span>
+						</div>
+						<canvas id="chartLight"></canvas>
+					</div>
+				</div>
+            </div>
+        </div>
+
+    </div>
+	<script src="mychart.js"></script>
+    <script>
+
+		var congtacs = document.querySelectorAll("input[type*='checkbox']")
+		console.log(congtacs)
+		var ledLabel = document.querySelectorAll(".labelLed");
+		console.log(ledLabel)
+
+		congtacs.forEach(function(congtac, index){
+			congtac.addEventListener('click', function() {
+				if ( congtac.checked === true ){
+					ledLabel[index].classList.remove('bgc-off');
+					ledLabel[index].classList.add('bgc-on');
+					ledLabel[index].classList.add('move');
+				}
+				else{
+					ledLabel[index].classList.remove('move');
+					ledLabel[index].classList.remove('bgc-on');
+					ledLabel[index].classList.add('bgc-of');
+				}
+			})
+		})
+
+		// Active type chart
+		var list = document.querySelectorAll('.activeLinks');
+		var preType = list[0];
+		list.forEach(function(chartType) {
+			chartType.addEventListener('click', function() {
+				preType.classList.remove('active');
+				preType = chartType;
+				preType.classList.add('active');
+				
+			})
+		})
+
+		// Show and hide sidebar
+		var sidebarControl = document.querySelector(".sidebar");
+		var mobileMenu = document.querySelector(".menu-list");
+		
+		function hide() {
+			sidebarControl.classList.toggle('showMenu');
+		}
+		mobileMenu.addEventListener('click', hide);
+		
+
+		//nhan du lieu tu socketserver va day len html
+		const humData = [];
+		const lightData = [];
+		const tempData = [];
+		const defaultLabels = [];
+		const chartHum = new Chart(
+			document.getElementById('chartHum'),
+			generateConfig(
+				defaultLabels,
+				humData,
+				'#1d8cf8',
+				'#1d8cf8',
+				'Humidity chart',
+				'Humidity'
+			)
+		);
+		const chartTemp = new Chart(
+			document.getElementById('chartTemp'),
+			generateConfig(
+				defaultLabels,
+				tempData,
+				'rgb(250, 125, 125)',
+				'rgb(250, 125, 125)',
+				'Temperature chart',
+				'Temperature'
+			)
+		);
+		const chartLight = new Chart(
+			document.getElementById('chartLight'),
+			generateConfig(
+				defaultLabels,
+				lightData,
+				'rgb(255, 255, 0)',
+				'rgb(255, 255, 0)',
+				'Light chart',
+				'Light'
+			)
+		);
+		var socket = io();
+		socket.on('sensor',handleOnSensorData);
+
+		function handleOnSensorData (message){
+			var day = document.getElementById('day');
+			var time = document.getElementById('time');
+			var hum = document.getElementById('div-hum');
+			var temp = document.getElementById('temp');
+			var light = document.getElementById('light');
+			var  relay1State = document.getElementById('state1');
+			var  relay2State = document.getElementById('state2');
+			var  relay3State = document.getElementById('state3');
+			var  relay4State = document.getElementById('state4');
+			var info = JSON.parse(message);
+			let date1 = new Date(info.d);
+			date1 = date1.toISOString();
+			let date = date1.split('T')[0];
+			let timeNow = info.d.split(' ')[3];
+			//update data to client
+			day.innerText = date;
+			time.innerText = timeNow ;
+			hum.innerText = info.h + '%';
+			temp.innerText = info.t + '°C';
+			light.innerText = info.l + 'lux';
+			relay1State.innerText = 'LED 1 ' + info.r1;
+			relay2State.innerText = 'LED 2 ' + info.r2;
+			relay3State.innerText = 'LED 3 ' + info.r3;
+			relay4State.innerText = 'LED 4 ' + info.r4;
+			//process data for chart
+			//daySplit = date.split('T')[0];
+			//hourSplit = date.split('T')[1].split('Z')[0].split(':')[0];
+			secondSplit = timeNow.split(":")[2];
+			humData.push(info.h);
+			lightData.push(info.l);
+			tempData.push(info.t);
+			defaultLabels.push(secondSplit+'s');
+			chartHum.update()
+			chartTemp.update()
+			chartLight.update()
+		}
+		socket.on('tragio',function(result){
+			tradata(result,"tragio")
+					
+		})
+		socket.on('trangay',function(result){
+			tradata(result,"trangay")
+					
+		})
+		function tradata(result,event){
+			console.log(result);
+			let labels=[];
+			let Daylabel = result.map((row)=> row.day)
+			let Hourlabel = result.map((row)=> row.hour)
+			for (let i = 0; i < Hourlabel.length; i++) {
+				if(event =="trangay") 
+					labels[i]=  Daylabel[i] +"d";
+				else			
+					labels[i]= Hourlabel[i] + "h/"+ Daylabel[i] +"d";	
+			}
+			console.log(labels);
+			let valueHum = result.map((row)=>row.humidity)
+			let valueTemp = result.map((row)=>row.temperature)
+			let valueLight = result.map((row)=>row.light)						
+			chartHum.data.labels = labels
+			chartTemp.data.labels = labels
+			chartLight.data.labels = labels					
+			chartHum.data.datasets[0].data = valueHum;
+			chartTemp.data.datasets[0].data = valueTemp;
+			chartLight.data.datasets[0].data = valueLight;						
+			chartHum.update();
+			chartTemp.update();
+			chartLight.update();			
+		}
+	</script>
+	<script>
+
+		//doc trang thai nut bam va emit cho server
+		var inputs = Array.from(
+			document.querySelectorAll('input[type="checkbox"]')
+		);
+
+		inputs.forEach((input) => {
+			input.addEventListener('click', function (e) {
+				//let textState = e.target.closest('div').querySelector('p');
+				let value = e.target.checked;
+				let RelayName = e.target.getAttribute('data');
+				let state = value ? 'on' : 'off';
+				//ban trang thai den cho server
+				socket.emit('changeRelayState', { RelayName, state });
+				console.log(RelayName,state,value);
+				
+			});
+		});
+		var radios = Array.from(document.querySelectorAll('input[type="radio"]'));
+
+		radios.forEach((radio) => {
+			radio.addEventListener('click',function(e){
+				let value =e.target.checked;
+				let layData = e.target.getAttribute('data');
+				if(layData == "laygiay"){
+					console.log(defaultLabels)
+					chartHum.data.labels = defaultLabels
+					chartHum.data.datasets[0].data = humData;
+					chartHum.update();
+					chartTemp.data.labels = defaultLabels
+					chartTemp.data.datasets[0].data = tempData;
+					chartTemp.update();
+					chartLight.data.labels = defaultLabels
+					chartLight.data.datasets[0].data = lightData ;
+					chartLight.update();				
+				}
+				else
+				socket.emit(layData)
+			})
+		}
+		)
+	</script>
+
+</body>
+</html>
